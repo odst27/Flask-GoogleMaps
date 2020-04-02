@@ -5,11 +5,6 @@ from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map, icons
 from dynaconf import FlaskDynaconf
 
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
-
-
-
 app = Flask(__name__, template_folder="templates")
 FlaskDynaconf(app)  # will read GOOGLEMAPS_KEY from .secrets.toml
 
@@ -19,13 +14,13 @@ FlaskDynaconf(app)  # will read GOOGLEMAPS_KEY from .secrets.toml
 
 # you can also pass key here
 GoogleMaps(
-    app
-    #key="AIzaSyDbDz_lUNOKBrmBMkfDwGHRfQ5XSXZSPeg"
+    app,
+    key="AIzaSyDbDz_lUNOKBrmBMkfDwGHRfQ5XSXZSPeg"
 )
 
 # NOTE: this example is using a form to get the apikey
 
-'''
+
 @app.route("/")
 def mapview():
     mymap = Map(
@@ -328,48 +323,10 @@ def mapview():
         clickmap=clickmap,
         GOOGLEMAPS_KEY=request.args.get("apikey"),
     )
-'''
-def refreshserver(region):
-
-   html = urlopen("https://www.miemssalert.com/chats/Default.aspx?hdRegion=" + str(region) + "&hdtab=Hospitals").read()
-   #html = urllib2.urlopen("https://www.miemssalert.com/chats/Default.aspx?hdRegion=3&hdtab=Hospitals").read()
-   #html = urllib2.urlopen("https://www.miemssalert.com/chats/Default.aspx?hdRegion=124&hdtab=Hospitals").read()
-   
-   soup = BeautifulSoup(html,features="lxml")
-   
-   table = soup.find("table", {"id": "tblHospitals"})
-   table_data = table.find_all("tr")
-   table_data.pop(0)
-   
-   hospitals = {}
-   i = 0
-   
-   for unit in table_data:
-      alerts = unit.find_all('td')
-      hospitals[i] = []
-      j = 0
-      for flag in alerts:
-         if j < 7:
-            hospitals[i].append(flag.string)
-            j = j + 1
-         
-      
-      i = i + 1
-   
-   
-   return hospitals
 
 
-
-@app.route("/")
-def main():
-    
-    mdregion = [124,3,5]
-
-    hgrid = refreshserver(mdregion[0])
-
-    return hgrid
-
+@app.route("/fullmap")
+def fullmap():
     fullmap = Map(
         identifier="fullmap",
         varname="fullmap",
