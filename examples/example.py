@@ -329,6 +329,7 @@ def mapview():
         GOOGLEMAPS_KEY=request.args.get("apikey"),
     )
 '''
+
 def refreshserver(region):
 
    html = urlopen("https://www.miemssalert.com/chats/Default.aspx?hdRegion=" + str(region) + "&hdtab=Hospitals").read()
